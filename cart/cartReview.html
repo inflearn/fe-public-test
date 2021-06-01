@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>cart review</title>
+
+    <style>
+      ul {
+        margin: 0;
+        padding: 0;
+      }
+      li {
+        list-style: none;
+      }
+
+      #root {
+        display: flex;
+      }
+      .course-card {
+        padding: 20px 15px;
+        width: 200px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+      }
+      .course-card:nth-child(n + 2) {
+        margin-top: 5px;
+      }
+      .course-card__title {
+        margin: 0;
+        font-size: 20px;
+      }
+      .course-card__info {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        margin-top: 10px;
+        margin-bottom: 20px;
+      }
+      .course-card__info > span {
+        font-size: 14px;
+      }
+      .course-card__buttons {
+        display: flex;
+      }
+      .course-card__buttons > button {
+        padding: 5px 0;
+        width: 100%;
+        text-align: center;
+        font-size: 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background-color: #fff;
+        cursor: pointer;
+      }
+      .course-card__buttons > button:focus {
+        outline: none;
+      }
+      .course-card__buttons > button:nth-child(n + 2) {
+        margin-left: 5px;
+      }
+
+      .cart-side {
+        margin-left: 50px;
+      }
+      .cart-card__title {
+        font-size: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root">
+      <ul class="course-cards"></ul>
+      <div class="cart-side">
+        <div class="cart-card">
+          <h1 class="cart-card__title">인프런 강의</h1>
+          <ul class="cart cart-inflearn"></ul>
+        </div>
+        <div class="cart-card">
+          <h1 class="cart-card__title">타플랫폼 강의</h1>
+          <ul class="cart cart-other"></ul>
+        </div>
+      </div>
+    </div>
+    <script type="text/javascript">
+      const $cards = document.querySelector('.course-cards');
+      const cards = [
+        { course_id: 1, title: 'Vanilla Javascript 강의', price: 10000, by_inflearn: true },
+        { course_id: 2, title: 'React 강의', price: 1000, by_inflearn: false },
+        { course_id: 3, title: 'Vue 강의', price: 21000, by_inflearn: true },
+        { course_id: 4, title: 'NodeJS 강의', price: 38000, by_inflearn: true },
+        { course_id: 5, title: 'HTML/CSS 강의', price: 7500, by_inflearn: false },
+      ];
+
+      $cards.innerHTML = cards.map(c => `
+        <li class="course-card">
+          <h2 class="course-card__title">${c.title}</h2>
+          <div class="course-card__info">
+            <span class="course-card__source">${c.by_inflearn ? '인프런 제공!' : '타플랫폼 제공'}</span>
+            <span class="course-card__price">${c.price}</span>
+          </div>
+          <div class="course-card__buttons">
+            <button type="button" data-id="${c.course_id}" class="course-card__button-like">좋아요</button>
+            <button type="button" data-id="${c.course_id}" class="course-card__button-cart">장바구니에 담기</button>
+          </div>
+        </li>`).join('');
+
+      const getCourseById = id => cards.find(c => c.course_id == id);
+
+      $cards.querySelectorAll('.course-card__button-cart').forEach($card => {
+        $card.addEventListener('click', ({ currentTarget }) => {
+          const { dataset: { id } } = currentTarget;
+          const course = getCourseById(id);
+          const $course = document.createElement('li');
+
+          $course.innerHTML = `<span>${course.title}</span><br/><span>${course.price}</span>`;
+
+          if (course.by_inflearn) {
+            document.querySelector('.cart-inflearn').appendChild($course);
+          } else {
+            document.querySelector('.cart-other').appendChild($course);
+          }
+        });
+      });
+      // TODO: NOT WORKING
+      $cards.getElementsByClassName('course-card__button-like').forEach($card => {
+        $card.addEventListener('click', ({ currentTarget }) => {
+          const { dataset: { id } } = currentTarget;
+          const course = getCourseById(id);
+
+          alert(`${course.title}에 좋아요!`);
+        });
+      });
+    </script>
+  </body>
+</html>
